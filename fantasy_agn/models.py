@@ -93,7 +93,8 @@ def automatic_path(s, path_to_models=input_path, overwrite=True):
 
             name = dirName + "/" + Path(files).name
             df.to_csv(name, index=False)
-def continuum(spec,name='brokenpowerlaw', refer=5500, min_refer=5400, max_refer=7000, index1=-1.7, min_index1=-3, max_index1=0, index2=0, min_index2=-1, max_index2=1):
+def continuum(spec, name='brokenpowerlaw', refer=5500, min_refer=5400, max_refer=7000, 
+              index1=-1.7, min_index1=-3, max_index1=0, index2=0, min_index2=-1, max_index2=1):
     """
     The continuum function is a broken power law.
     
@@ -105,7 +106,14 @@ def continuum(spec,name='brokenpowerlaw', refer=5500, min_refer=5400, max_refer=
         where the amplitude, index, and reference wavelength are parameters of the model.  The default values are:
     
             ampl     1e-16 erg/cm**2/s/Angstrom
-            index    -0.7   dimensionless constant that defines the slope of the power law above 5000 Angstroms; it is equal to -0.7 in our fit to UVES spectra from Vestergaard & Peterson 1991 ApJ 374, 344; this value was changed from -0.5 to account for higher resolution data from Keck Observatories since that paper was published (see Section 2 of Smith et al 2006 ApJS 164, 508).  This parameter can be set between 0 and 3 inclusive with a limit placed on its value by requiring that it must be greater than or equal to min_index when evaluated at max_refer and less than or equal to max_index when evaluated at min_refer; see below for more details on these parameters which control
+            index    -0.7   dimensionless constant that defines the slope of the power law above 5000 Angstroms; 
+            it is equal to -0.7 in our fit to UVES spectra from Vestergaard & Peterson 1991 ApJ 374, 344; 
+            this value was changed from -0.5 to account for higher resolution data from Keck Observatories 
+            since that paper was published (see Section 2 of Smith et al 2006 ApJS 164, 508).  
+            This parameter can be set between 0 and 3 inclusive with a limit placed on its value 
+            by requiring that it must be greater than or equal to min_index when evaluated at max_refer and 
+            less than or equal to max_index when evaluated at min_refer; see below for more details on these parameters 
+            which control
     
     :param spec: Used to Pass in the spectrum to fit.
     :param name='brokenpowerlaw': Used to Name the model in a fit.
@@ -162,10 +170,8 @@ def continuum(spec,name='brokenpowerlaw', refer=5500, min_refer=5400, max_refer=
 
             x = np.asarray(x, dtype=SherpaFloat)
             arg = x / p[0]
-            arg = p[1] * (
-                np.where(arg > 1.0, np.power(
-                    arg, p[2] + p[3]), np.power(arg, p[2]))
-            )
+            arg = p[1] * (np.where(arg < 1.0, np.power(arg, p[2] + p[3]), np.power(arg, p[2])))
+            # originally: arg > 1.0 was flipped
             return arg
     return BrokenPowerlaw()
 
@@ -321,7 +327,10 @@ def create_line(name='line', pos=4861, ampl=5, min_ampl=0, max_ampl=500, fwhm= 1
             Default is 5, which means that if your spectrum has a continuum level equal to 1 then F(x=0)=5 and if it's 0 then F(x=0)=5+offset .  
             If you want to set an absolute flux density rather than relative values, use hard_min and hard_max instead!
     
-        min_ampl (float): A lower limit for amplitude above which no lines will be created by create_line().  This can be useful when creating multiple lines from one input parameter because sometimes there are "bumps" or other features in a single spectrum where it makes sense to have multiple lines with different centroids but similar amplitudes so they don't overlap each other
+        min_ampl (float): A lower limit for amplitude above which no lines will be created by create_line().  
+        This can be useful when creating multiple lines from one input parameter because sometimes there are "bumps" 
+        or other features in a single spectrum where it makes sense to have multiple lines with different centroids 
+        but similar amplitudes so they don't overlap each other
     
     :param name='line': Used to Name the line in the model.
     :param pos=4861: Used to Specify the central wavelength of the line.

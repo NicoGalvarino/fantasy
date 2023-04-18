@@ -25,9 +25,10 @@ from RegscorePy import aic, bic
 import multiprocessing.pool
 import os
 
-script_dir = os.path.dirname(__file__)
+script_dir = '/Users/nicolasgalvarinoguerravaras/Documents/CODE/fantasy/fantasy_agn'  # os.getcwd()  # os.path.dirname(__file__)
 sfdpath = os.path.join(script_dir, "sfddata")
 pathEigen = os.path.join(script_dir, "eigen/")
+
 import warnings
 
 warnings.filterwarnings("ignore")
